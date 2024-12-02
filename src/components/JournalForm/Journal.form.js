@@ -24,7 +24,8 @@ export function formReducer(state, action) {
     case 'SUBMIT': {
       const titleValid = state.values.title?.trim() !== '';
       const textValid = state.values.text?.trim() !== '';
-      const dateValid = state.values.date?.trim() !== '';
+      const dateValid =
+        state.values.date instanceof Date && !isNaN(state.values.date);
 
       return {
         ...state,

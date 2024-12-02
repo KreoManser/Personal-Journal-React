@@ -7,7 +7,7 @@ import { formReducer, INITIAL_STATE } from './Journal.form';
 import { UserContext } from '../../context/user.context';
 import { useContext } from 'react';
 
-function JournalForm({ onSubmit }) {
+function JournalForm({ onSubmit, data }) {
   const [formState, dispatchForm] = useReducer(formReducer, INITIAL_STATE);
   const { isValid, values } = formState;
   const titleRef = useRef();
@@ -28,6 +28,10 @@ function JournalForm({ onSubmit }) {
         break;
     }
   };
+
+  useEffect(() => {
+    dispatchForm({ type: 'SET_VALUE', payload: { ...data } });
+  }, [data]);
 
   useEffect(() => {
     let timerID;
@@ -61,7 +65,7 @@ function JournalForm({ onSubmit }) {
 
     const titleValid = values.title.trim() !== '';
     const textValid = values.text.trim() !== '';
-    const dateValid = values.date.trim() !== '';
+    const dateValid = values.date !== '';
 
     const canSubmit = titleValid && textValid && dateValid;
     dispatchForm({ type: 'SUBMIT' });
@@ -69,6 +73,10 @@ function JournalForm({ onSubmit }) {
     if (canSubmit) {
       onSubmit(values);
       dispatchForm({ type: 'CLEAR' });
+      dispatchForm({
+        type: 'SET_VALUE',
+        payload: { userId },
+      });
     }
   };
 
@@ -95,8 +103,13 @@ function JournalForm({ onSubmit }) {
           type="date"
           isValid={isValid.date}
           ref={dateRef}
-          value={values.date}
-          onChange={onChange}
+          value={values.date ? values.date.toISOString().slice(0, 10) : ''}
+          onChange={(e) => {
+            dispatchForm({
+              type: 'SET_VALUE',
+              payload: { date: new Date(e.target.value) },
+            });
+          }}
           name="date"
         />
       </div>
