@@ -127,7 +127,7 @@ function JournalForm({ onSubmit }) {
           })}
         ></textarea>
       </div>
-      <Button text="Сохранить" />
+      <Button>Сохранить</Button>
     </form>
   );
 }
